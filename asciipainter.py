@@ -8,6 +8,16 @@ import numpy as np
 # Developped by Cedric Bouysset
 # Based on python codes by Micah Elliott and Christian Diener
 
+# Check whether all necessary command line arguments were given, if not exit and show a usage hint.
+if len(sys.argv) != 6:
+    print( 'Usage: ./asciinator.py image scale factor color_sat mode' )
+    print( '                       image : path to jpg image' )
+    print( '                       scale : resize the image to scale*original_size (1 for default)' )
+    print( '                       factor : intensity correction for ASCII assignment (1 for default)' )
+    print( '                       color_sat : color-intensity correction (1 for default)' )
+    print( '                       mode : RGB if your terminal supports it, else 256 color (256/RGB)' )
+    sys.exit()
+
 #-----------------------------------------------------------------------
 # Map RGB color code to xterm 256 color code
 # By MicahElliott
@@ -364,17 +374,7 @@ RGB2SHORT_DICT, SHORT2RGB_DICT = _create_dicts()
 orig_chars = ' .,:;irsXA253hMHGS#9B&@'
 # Reverse the original list to correspond to our needs
 chars = np.asarray(list(reversed(orig_chars)))
- 
-# Check whether all necessary command line arguments were given, if not exit and show a
-# usage hint. Since the original comment will also be counted as argument we need 5.
-if len(sys.argv) != 6:
-    print( 'Usage: ./asciinator.py image scale factor color_sat mode' )
-    print( '                       image : path to jpg image' )
-    print( '                       scale : resize the image to scale*original_size (1 for default)' )
-    print( '                       factor : intensity correction for ASCII assignment (1 for default)' )
-    print( '                       color_sat : color-intensity correction (1 for default)' )
-    print( '                       mode : RGB if your terminal supports it, else 256 color (256/RGB)' )
-    sys.exit()
+
 
 # Get some important constants like the filename f, the image size scaling SC and a
 # intensity correction factor from the command line arguments. The WCF is a width correction
