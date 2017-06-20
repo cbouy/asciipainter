@@ -10,7 +10,7 @@ import numpy as np
 
 # Check whether all necessary command line arguments were given, if not exit and show a usage hint.
 if len(sys.argv) != 6:
-    print( 'Usage: ./asciinator.py image scale factor color_sat mode' )
+    print( 'Usage: ./asciipainter.py image scale factor color_sat mode' )
     print( '                       image : path to jpg image' )
     print( '                       scale : resize the image to scale*original_size (1 for default)' )
     print( '                       factor : intensity correction for ASCII assignment (1 for default)' )
