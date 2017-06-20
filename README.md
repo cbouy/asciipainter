@@ -51,3 +51,11 @@ awk 'BEGIN{
 ```
 Should output a line of "/\" with colors going from red to blue in the foreground and background.
 If most of the background colors are skipped, your terminal doesn't support True Colour.
+
+# Example
+Original (Photo by Vlad Savov / The Verge)
+![alt text](https://raw.githubusercontent.com/cbouy/asciipainter/master/example/car.jpg "Original image")
+Output with default `factor` and `color_sat`, in xterm-256 colors
+![alt text](https://raw.githubusercontent.com/cbouy/asciipainter/master/example/Capture.PNG "Default terminal output")
+Output with `1.1 factor` and `1.5 color_sat`, in xterm-256 colors
+![alt text](https://raw.githubusercontent.com/cbouy/asciipainter/master/example/Capture2.PNG "Terminal output with small adjustments")
