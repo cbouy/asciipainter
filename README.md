@@ -11,7 +11,7 @@ Transforms an image into an ASCII style colored text on your terminal.
 See https://gist.github.com/XVilka/8346728 for more info on terminals.
 
 # Usage
-`./asciinator.py image scale factor color_sat mode`
+`./asciipainter.py image scale factor color_sat mode`
 * image : path to jpg image
 * scale : resize the image to scale*original_size (1 for default)
 * factor : intensity correction for ASCII assignment (1 for default)
