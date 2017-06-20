@@ -8,21 +8,23 @@
 # the image and third numpy, a linear algebra/vector/matrix module.
 import sys
 from PIL import Image
+from PIL import ImageEnhance
 import numpy as np
 
 # This is a list of characters from low to high "blackness" in order to map the
 # intensities of the image to ascii characters 
 c = ' .,:;irsXA253hMHGS#9B&@'
+# Reverse the original list to correspond to our needs
 chars = np.asarray(list(reversed(c)))
  
 # Check whether all necessary command line arguments were given, if not exit and show a
-# usage hint. Since the original comment will also be counted as argument we need 4.
-if len(sys.argv) != 4: print( 'Usage: ./asciinator.py image scale factor' ); sys.exit()
+# usage hint. Since the original comment will also be counted as argument we need 5.
+if len(sys.argv) != 5: print( 'Usage: ./asciinator.py image scale factor color_saturation' ); sys.exit()
 
 # Get some important constants like the filename f, the image size scaling SC and a
 # intensity correction factor from the command line arguments. The WCF is a width correction
 # factor we will use since most font characters are higher than wide. 
-f, SC, GCF, WCF = sys.argv[1], float(sys.argv[2]), float(sys.argv[3]), 7/4
+f, SC, GCF, WCF, SF = sys.argv[1], float(sys.argv[2]), float(sys.argv[3]), 1.9, float(sys.argv[4])
 
 # This line opens the image 
 img = Image.open(f)
@@ -61,15 +63,17 @@ img = (1.0 - img/img.max())**GCF*(chars.size-1)
 # and in the outer join we combine all of the row characters by gluing them with together with newline characters.
 # All of that is printed and done :) 
 
-# Color stuff
+# Convert to RGB and resize
 rgb_im = Image.open(f).convert('RGB').resize(S)
-rgb_arr = np.array(rgb_im)
-colors = []
+# Apply color correction
+improved = ImageEnhance.Color(rgb_im).enhance(SF)
+# Convert to array
+rgb_arr = np.array(improved)
+# Print
 for line,l in zip(rgb_arr, img.astype(int)):
     s = list(chars[l])
     for pixel,p in zip(line,s):
         r, g, b = pixel
         pix = "\x1b[38;2;{};{};{}m{}\x1b[0m".format(r,g,b,p)
-        colors.append(pix)
         print(pix, end="")
     print()
