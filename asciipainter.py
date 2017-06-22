@@ -376,13 +376,13 @@ parser = argparse.ArgumentParser(description='Transforms an image into an ASCII 
 group_input = parser.add_argument_group('Basic arguments')
 group_input.add_argument("-i", "--input", nargs='?', required=True, help="Path to the image in jpg format.")
 group_input.add_argument("-m", "--mode", nargs='?', required=False, default="256", choices=["256","RGB"], help="Color palette used for the output : RGB or 256 colors. If your terminal supports TrueColour, go for RGB.")
-group_input.add_argument("-a", "--ascii", nargs='?', required=False, default=1.0, type=float, help="ASCII level correction factor. Changes the assignment of a pixel to a higher or lower level character.")
-group_input.add_argument("-c", "--color", nargs='?', required=False, default=1.0, type=float, help="Color saturation correction factor. Changes the intensity of colors on the output.")
+group_input.add_argument("-a", "--ascii", nargs='?', required=False, default=1.0, type=float, metavar="FLOAT", help="ASCII level correction factor. Changes the assignment of a pixel to a higher or lower level character.")
+group_input.add_argument("-c", "--color", nargs='?', required=False, default=1.0, type=float, metavar="FLOAT", help="Color saturation correction factor. Changes the intensity of colors on the output.")
 
 group_args = parser.add_argument_group('Output scale arguments')
 group_args.add_argument("--auto", nargs='?', required=False, default="h", choices=["h","w"], help="Automatically scale the output based on height (h) or width (w) of your terminal. Default : h")
-group_args.add_argument("-s","--scale", nargs='?', required=False, default=1.0, type=float, help="Rescale the output by this correction factor.")
-group_args.add_argument("-p", "--pixel", nargs='?', required=False, default=1.9, type=float, help="Correction factor to account for the difference in height/width of a character compared to a pixel. Default : 1.9")
+group_args.add_argument("-s","--scale", nargs='?', required=False, default=1.0, type=float, metavar="FLOAT", help="Rescale the output by this correction factor.")
+group_args.add_argument("-p", "--pixel", nargs='?', required=False, default=1.9, type=float, metavar="FLOAT", help="Correction factor to account for the difference in height/width of a character compared to a pixel. Default : 1.9")
 
 args = parser.parse_args()
 
