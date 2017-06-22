@@ -1,22 +1,14 @@
 #!/usr/bin/env python3
 
 import sys, re
+import argparse
+import shutil
 from PIL import Image
 from PIL import ImageEnhance
 import numpy as np
 
 # Developped by Cedric Bouysset
 # Based on python codes by Micah Elliott and Christian Diener
-
-# Check whether all necessary command line arguments were given, if not exit and show a usage hint.
-if len(sys.argv) != 6:
-    print( 'Usage: ./asciipainter.py image scale factor color_sat mode' )
-    print( '                       image : path to jpg image' )
-    print( '                       scale : resize the image to scale*original_size (1 for default)' )
-    print( '                       factor : intensity correction for ASCII assignment (1 for default)' )
-    print( '                       color_sat : color-intensity correction (1 for default)' )
-    print( '                       mode : RGB if your terminal supports it, else 256 color (256/RGB)' )
-    sys.exit()
 
 #-----------------------------------------------------------------------
 # Map RGB color code to xterm 256 color code
@@ -378,17 +370,45 @@ chars = np.asarray(list(reversed(orig_chars)))
 
 # Get some important constants like the filename f, the image size scaling SC and a
 # intensity correction factor from the command line arguments. The WCF is a width correction
-# factor we will use since most font characters are higher than wide. 
-f, SC, GCF, WCF, SF, mode = sys.argv[1], float(sys.argv[2]), float(sys.argv[3]), 1.9, float(sys.argv[4]), sys.argv[5]
+# factor we will use since most font characters are higher than wide.
+parser = argparse.ArgumentParser(description='Transforms an image into an ASCII style colored text on your terminal.', epilog='Only the input image is mandatory for the script to work.')
+
+group_input = parser.add_argument_group('Basic arguments')
+group_input.add_argument("-i", "--input", nargs='?', required=True, help="Path to the image in jpg format.")
+group_input.add_argument("-m", "--mode", nargs='?', required=False, default="256", choices=["256","RGB"], help="Color palette used for the output : RGB or 256 colors. If your terminal supports TrueColour, go for RGB.")
+group_input.add_argument("-a", "--ascii", nargs='?', required=False, default=1.0, type=float, help="ASCII level correction factor. Changes the assignment of a pixel to a higher or lower level character.")
+group_input.add_argument("-c", "--color", nargs='?', required=False, default=1.0, type=float, help="Color saturation correction factor. Changes the intensity of colors on the output.")
+
+group_args = parser.add_argument_group('Output scale arguments')
+group_args.add_argument("--auto", nargs='?', required=False, default="h", choices=["h","w"], help="Automatically scale the output based on height (h) or width (w) of your terminal. Default : h")
+group_args.add_argument("-s","--scale", nargs='?', required=False, default=1.0, type=float, help="Rescale the output by this correction factor.")
+group_args.add_argument("-p", "--pixel", nargs='?', required=False, default=1.9, type=float, help="Correction factor to account for the difference in height/width of a character compared to a pixel. Default : 1.9")
+
+args = parser.parse_args()
+
+f    = args.input
+SC   = args.scale
+GCF  = args.ascii
+WCF  = args.pixel
+SF   = args.color
+mode = args.mode
 
 # This line opens the image 
 img = Image.open(f)
+
+# Get the size of the terminal for autoscaling
+termsize = shutil.get_terminal_size()
 
 # here we set the new size of the image. The whole image is scaled by the scale factor given
 # in the command line arguments and we also correct the image with the width correction factor
 # so that the resulting asciii image has approximately the same aspect ratio as the original
 # image.
-S = ( round(img.size[0]*SC*WCF), round(img.size[1]*SC) )
+if args.auto == "h":
+    auto_factor = termsize[1] / img.size[1]
+else:
+    auto_factor = termsize[0] / (img.size[0] * WCF)
+
+S = ( round(img.size[0]*SC*WCF*auto_factor), round(img.size[1]*SC*auto_factor) )
 
 # Here we resize the image and add up the rgb values of the image to get the overall intensity
 # values for each pixel.
@@ -429,7 +449,7 @@ for line,l in zip(rgb_arr, img.astype(int)):
     s = list(chars[l])
     for pixel,p in zip(line,s):
         r, g, b = pixel
-        if mode in ["rgb", "RGB"]:
+        if mode == "RGB":
             pix = "\x1b[38;2;{};{};{}m{}\x1b[0m".format(r,g,b,p)
         else:
             # convert RGB to Hex code
@@ -439,3 +459,5 @@ for line,l in zip(rgb_arr, img.astype(int)):
             pix = "\x1b[38;5;{}m{}\x1b[0m".format(c,p)
         print(pix, end="")
     print()
+
+
